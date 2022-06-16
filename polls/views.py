@@ -2,17 +2,18 @@ from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic # for generic views
 
 from .models import Question, Choice
 
-def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    template = loader.get_template('polls/index.html')
-    context = {
-        'latest_question_list': latest_question_list,
-    }
-
-    return render(request, 'polls/index.html', context)
+# def index(request):
+#     latest_question_list = Question.objects.order_by('-pub_date')[:5]
+#     template = loader.get_template('polls/index.html')
+#     context = {
+#         'latest_question_list': latest_question_list,
+#     }
+#
+#     return render(request, 'polls/index.html', context)
 
     # latest_question_list = Question.objects.order_by('-pub_date')[:5]
     # template = loader.get_template('polls/index.html')
@@ -22,12 +23,20 @@ def index(request):
     #
     # return HttpResponse(template.render(context, request))
 
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
 
-def detail(request, question_id):
-    # shortcut
-    question = get_object_or_404(Question, pk=question_id)
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by('-pub_date')[:5]
 
-    return render(request, 'polls/detail.html', {'question': question})
+
+# def detail(request, question_id):
+#     # shortcut
+#     question = get_object_or_404(Question, pk=question_id)
+#
+#     return render(request, 'polls/detail.html', {'question': question})
 
     # old longer way
     # try:
@@ -36,6 +45,10 @@ def detail(request, question_id):
     #     raise Http404("Question does not exist")
     #
     # return render(request, 'polls/detail.html', {'question': question})
+
+class DetailView(generic.DetailView): # expects pk to be passed
+    model = Question # what model are we focusing here on
+    template_name = 'polls/detail.html'
 
 
 # def results(request, question_id):
@@ -65,7 +78,11 @@ def vote(request, question_id):
 def owner(request):
     return HttpResponse("Hello, world. 0b6cf75f is the polls index.")
 
-def results(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
+# def results(request, question_id):
+#     question = get_object_or_404(Question, pk=question_id)
+#
+#     return render(request, 'polls/results.html', {'question': question})
 
-    return render(request, 'polls/results.html', {'question': question})
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
