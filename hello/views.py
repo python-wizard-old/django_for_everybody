@@ -9,4 +9,4 @@ def hello_view(request):
 	if num_visits > 4:
 		del (request.session['num_visits'])
 
-	return HttpResponse('7b4f363a View count=' + str(num_visits))
+	return HttpResponse('7b4f363a view count=' + str(num_visits))
