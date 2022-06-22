@@ -12,4 +12,4 @@ def hello_view(request):
 	resp = HttpResponse('7b4f363a view count=' + str(num_visits))
 	resp.set_cookie('dj4e_cookie', '7b4f363a', max_age=1000)
 
-	return HttpResponse('7b4f363a view count=' + str(num_visits))
+	return resp
